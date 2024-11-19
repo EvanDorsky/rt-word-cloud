@@ -6,18 +6,6 @@
 
 var text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum et turpis eleifend, lobortis orci quis, feugiat augue. Nulla viverra turpis diam, sit amet accumsan magna lacinia nec. Nullam tincidunt condimentum augue, id accumsan lacus lacinia in. Curabitur vehicula nisi vel ullamcorper tincidunt. Nulla nec fermentum ante. In egestas est sodales ipsum aliquam, sit amet cursus leo cursus. Praesent consectetur ullamcorper facilisis. Sed sagittis varius arcu. Curabitur et nunc turpis. Mauris ac ullamcorper velit. Nam bibendum nisl massa. In blandit sapien ac neque rhoncus vehicula."
 
-function fontSize(r) {
-  return r*2
-}
-
-function elRadius(ctx, d) {
-  ctx.font = `bold ${fontSize(d.r)}px sans-serif`
-  const s = ctx.measureText(d.text)
-  console.log('s')
-  console.log(s)
-  return s.width/2
-}
-
 function boundedBox() {
     let nodes, sizes
     let bounds
@@ -194,6 +182,20 @@ force.iterations = function (_) {
 return force
 }//end rectCollide
 
+function fontSize(r) {
+  return r*2
+}
+
+function textWidth(ctx, d) {
+  return ctx.measureText(d.text)
+}
+
+function elRadius(ctx, d) {
+  ctx.font = `bold ${fontSize(d.r)}px sans-serif`
+  const s = textWidth(ctx, d)
+  return s.width/2
+}
+
 function main() {
   const width  = 800
   const height = width
@@ -232,7 +234,10 @@ function main() {
   const nodes = data.map(d => (
     {
       r: d.size*10,
-      text: d.text
+      text: d.text,
+      width: textWidth(ctx, d),
+      height: fontSize(d.size*10)
+      // GO HEEEEEEEEERE
     }
   ))
   console.log('nodes')
@@ -242,12 +247,18 @@ function main() {
 
   let collisionForce = rectCollide()
       .size(function(d){return [d.width,d.height]});
+
+  console.log('collisionForce')
+  console.log(collisionForce)
   
   let boxForce = boundedBox()
       .bounds([[0, 0], [width, height]])
       .size(function (d) { return [d.width, d.height] })
 
-  const simulation = d3.forceSimulation(nodes)
+  console.log('boxForce')
+  console.log(boxForce)
+
+  const simulation = d3.forceSimulation()
     .velocityDecay(0.2)
     .force("x", d3.forceX().strength(0.02))
     .force("y", d3.forceY().strength(0.02))
@@ -255,6 +266,7 @@ function main() {
     // https://observablehq.com/@lvngd/rectangular-collision-detection
     // .force('box', boxForce)
     // .force('collision', collisionForce)
+    .nodes(nodes)
     .on("tick", ticked);
 
   // invalidation.then(() => simulation.stop())
@@ -273,7 +285,7 @@ function main() {
 
     ctx.fillStyle = "#000"
     for (const d of nodes) {
-      ctx.font = `bold ${fontSize(d.r)}px sans-serif`
+      ctx.font = `${fontSize(d.r)}px sans-serif`
       ctx.fillText(d.text, d.x, d.y)
     }
     ctx.restore()

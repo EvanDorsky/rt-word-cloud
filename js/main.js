@@ -249,8 +249,8 @@ function main() {
 
   const simulation = d3.forceSimulation(nodes)
     .velocityDecay(0.2)
-    .force("x", d3.forceX().strength(0.002))
-    .force("y", d3.forceY().strength(0.002))
+    .force("x", d3.forceX().strength(0.02))
+    .force("y", d3.forceY().strength(0.02))
     .force("collide", d3.forceCollide().radius(d => elRadius(ctx, d)).iterations(2))
     // https://observablehq.com/@lvngd/rectangular-collision-detection
     // .force('box', boxForce)

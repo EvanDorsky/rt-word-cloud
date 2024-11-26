@@ -186,13 +186,16 @@ function fontSize(r) {
   return r*2
 }
 
-function textWidth(ctx, d) {
-  return ctx.measureText(d.text)
+function textSizeInfo(ctx, d) {
+  const res = ctx.measureText(d.text)
+  console.log(d.text)
+  console.log(res.width)
+  return res
 }
 
 function elRadius(ctx, d) {
   ctx.font = `bold ${fontSize(d.r)}px sans-serif`
-  const s = textWidth(ctx, d)
+  const s = textSizeInfo(ctx, d)
   return s.width/2
 }
 
@@ -228,44 +231,38 @@ function main() {
     .slice(0, maxWords)
     .map(([key, size]) => ({text: word(key), size}));
 
-  console.log('data')
-  console.log(data)
 
   const nodes = data.map(d => (
     {
       r: d.size*10,
       text: d.text,
-      width: textWidth(ctx, d),
-      height: fontSize(d.size*10)
+      width: textSizeInfo(ctx, d).width*2,
+      height: fontSize(d.size*10)*2,
+      x: Math.random()*250,
+      y: Math.random()*20
+      // height: 14
       // GO HEEEEEEEEERE
     }
   ))
-  console.log('nodes')
-  console.log(nodes)
 
   // do the simulation
 
   let collisionForce = rectCollide()
       .size(function(d){return [d.width,d.height]});
 
-  console.log('collisionForce')
-  console.log(collisionForce)
   
   let boxForce = boundedBox()
       .bounds([[0, 0], [width, height]])
       .size(function (d) { return [d.width, d.height] })
 
-  console.log('boxForce')
-  console.log(boxForce)
-
   const simulation = d3.forceSimulation()
     .velocityDecay(0.2)
     .force("x", d3.forceX().strength(0.02))
     .force("y", d3.forceY().strength(0.02))
-    .force("collide", d3.forceCollide().radius(d => elRadius(ctx, d)).iterations(2))
+    // .force("collide", d3.forceCollide().radius(d => elRadius(ctx, d)).iterations(2))
     // https://observablehq.com/@lvngd/rectangular-collision-detection
-    // .force('box', boxForce)
-    // .force('collision', collisionForce)
+    .force('box', boxForce)
+    .force('collision', collisionForce)
     .nodes(nodes)
     .on("tick", ticked);
 

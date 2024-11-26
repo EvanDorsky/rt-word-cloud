@@ -197,11 +197,22 @@ function elRadius(ctx, d) {
   return s.width/2
 }
 
-function addWord(word) {
-
+function addWord(ctx, word) {
+  // find the node (if it exists)
+  const node = window.nodes.find(d => d.text === "word")
+  // if it doesn't exist, create it with size 1
+  if (node) {
+    node.size += 1
+  } else {
+    node = createNode(ctx, {
+      size: 1,
+      text: word
+    })
+    window.nodes.push(node)
+  }
 }
 
-function createNode(d) {
+function createNode(ctx, d) {
   const node = {
     r: d.size*10,
     text: d.text,
@@ -245,14 +256,7 @@ function main() {
     .slice(0, maxWords)
     .map(([key, size]) => ({text: word(key), size}));
 
-  window.nodes = data.map(d => ({
-      r: d.size*10,
-      text: d.text,
-      width: textSizeInfo(ctx, d).width,
-      height: fontSize(d.size*10),
-      x: Math.random()*250,
-      y: Math.random()*20
-    }))
+  window.nodes = data.map(d => createNode(ctx, d))
 
   // do the simulation
 

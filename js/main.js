@@ -199,25 +199,48 @@ function elRadius(d) {
 
 function addWord(word) {
   // find the node (if it exists)
-  const node = window.nodes.find(d => d.text === "word")
+  console.log(1)
+  const node = window.nodes.find(d => d.text === word)
+  console.log(2)
   // if it doesn't exist, create it with size 1
   if (node) {
-    node.size += 1
+    console.log(3)
+    console.log('node exists')
+    console.log(node)
+    console.log('node size')
+    console.log(node.size)
+    node.size = node.size+1
+    node.r = node.size*10
+    // todo: width and height
+    console.log('node size after')
+    console.log(node.size)
   } else {
+    console.log(4)
     node = createNode({
       size: 1,
       text: word
     })
+    console.log(5)
     window.nodes.push(node)
   }
+  window.simulation.nodes(window.nodes)
+
+  window.simulation.force("x").initialize(window.nodes)
+  window.simulation.force("y").initialize(window.nodes)
+  window.simulation.force("collide").initialize(window.nodes)
+  window.simulation.alpha(1)
+  window.simulation.restart()
+  // window.simulation.on("tick")()
+  console.log('done')
 }
 
 function createNode(d) {
   const node = {
+    size: d.size,
     r: d.size*10,
     text: d.text,
-    width: textSizeInfo(d).width,
-    height: fontSize(d.size*10),
+    // width: textSizeInfo(d).width,
+    // height: fontSize(d.size*10),
     x: Math.random()*250,
     y: Math.random()*20
   }
@@ -267,7 +290,7 @@ function main() {
   //   .bounds([[0, 0], [width, height]])
   //   .size(function (d) { return [d.width, d.height] })
 
-  const simulation = d3.forceSimulation()
+  window.simulation = d3.forceSimulation()
     .velocityDecay(0.2)
     .force("x", d3.forceX().strength(0.02))
     .force("y", d3.forceY().strength(0.02))
@@ -275,12 +298,13 @@ function main() {
     // https://observablehq.com/@lvngd/rectangular-collision-detection
     // .force('box', boxForce)
     // .force('collision', collisionForce)
-    .nodes(nodes)
-    .on("tick", ticked);
+    .nodes(window.nodes)
+    .on("tick", ticked)
 
   // invalidation.then(() => simulation.stop())
 
   function ticked() {
+    console.log('tick')
     ctx.clearRect(0, 0, width, height)
     ctx.save()
     ctx.translate(width / 2, height / 2)
@@ -293,7 +317,7 @@ function main() {
     // ctx.stroke()
 
     ctx.fillStyle = "#000"
-    for (const d of nodes) {
+    for (const d of window.nodes) {
       ctx.font = `${fontSize(d.r)}px sans-serif`
       ctx.fillText(d.text, d.x, d.y)
     }

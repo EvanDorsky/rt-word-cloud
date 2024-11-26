@@ -200,7 +200,7 @@ function elRadius(ctx, d) {
 }
 
 function main() {
-  const width  = 800
+  const width  = 1000
   const height = width
 
   const canvas = document.getElementById("main")
@@ -259,10 +259,10 @@ function main() {
     .velocityDecay(0.2)
     .force("x", d3.forceX().strength(0.02))
     .force("y", d3.forceY().strength(0.02))
-    // .force("collide", d3.forceCollide().radius(d => elRadius(ctx, d)).iterations(2))
+    .force("collide", d3.forceCollide().radius(d => elRadius(ctx, d)).iterations(2))
     // https://observablehq.com/@lvngd/rectangular-collision-detection
-    .force('box', boxForce)
-    .force('collision', collisionForce)
+    // .force('box', boxForce)
+    // .force('collision', collisionForce)
     .nodes(nodes)
     .on("tick", ticked);
 

@@ -246,10 +246,11 @@ function createNode(d) {
 function main() {
   // element setup
 
-  const width  = 1000
-  const height = width
-
   const canvas = document.getElementById("main")
+
+  const width  = canvas.getBoundingClientRect().width
+  const height  = canvas.getBoundingClientRect().height
+
   window.ctx = canvas.getContext('2d')
   ctx.textAlign = "center"
   ctx.textBaseline = "middle"

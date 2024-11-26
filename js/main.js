@@ -4,7 +4,7 @@
   }
 )()
 
-var text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum et turpis eleifend, lobortis orci quis, feugiat augue. Nulla viverra turpis diam, sit amet accumsan magna lacinia nec. Nullam tincidunt condimentum augue, id accumsan lacus lacinia in. Curabitur vehicula nisi vel ullamcorper tincidunt. Nulla nec fermentum ante. In egestas est sodales ipsum aliquam, sit amet cursus leo cursus. Praesent consectetur ullamcorper facilisis. Sed sagittis varius arcu. Curabitur et nunc turpis. Mauris ac ullamcorper velit. Nam bibendum nisl massa. In blandit sapien ac neque rhoncus vehicula."
+var text = "The medium is the message"
 
 function boundedBox() {
     let nodes, sizes
@@ -200,15 +200,11 @@ function elRadius(d) {
 function addWord(word) {
   // find the node (if it exists)
   console.log(1)
-  const node = window.nodes.find(d => d.text === word)
+  const node = window.nodes.find(d => d.text == word)
   console.log(2)
   // if it doesn't exist, create it with size 1
   if (node) {
     console.log(3)
-    console.log('node exists')
-    console.log(node)
-    console.log('node size')
-    console.log(node.size)
     node.size = node.size+1
     node.r = node.size*10
     // todo: width and height
@@ -216,12 +212,12 @@ function addWord(word) {
     console.log(node.size)
   } else {
     console.log(4)
-    node = createNode({
+    const newNode = createNode({
       size: 1,
       text: word
     })
     console.log(5)
-    window.nodes.push(node)
+    window.nodes.push(newNode)
   }
   window.simulation.nodes(window.nodes)
 
@@ -241,13 +237,15 @@ function createNode(d) {
     text: d.text,
     // width: textSizeInfo(d).width,
     // height: fontSize(d.size*10),
-    x: Math.random()*250,
-    y: Math.random()*20
+    x: Math.random()*250-120,
+    y: Math.random()*20-10
   }
   return node
 }
 
 function main() {
+  // element setup
+
   const width  = 1000
   const height = width
 
@@ -255,6 +253,14 @@ function main() {
   window.ctx = canvas.getContext('2d')
   ctx.textAlign = "center"
   ctx.textBaseline = "middle"
+
+  document.getElementById("input").addEventListener("input", e => {
+    if (e.data === " ") {
+      const word = e.target.value.trim().toLowerCase()
+      e.target.value = ""
+      addWord(word)
+    }
+  })
 
   const sim = d3.forceSimulation()
 
@@ -274,7 +280,7 @@ function main() {
 
   const words = typeof text === "string" ? text.split(/\W+/g) : Array.from(text);
   
-  const data = d3.rollups(words, size, w => w)
+  const data = d3.rollups(words, size, w => w.toLowerCase())
     .sort(([, a], [, b]) => d3.descending(a, b))
     .slice(0, maxWords)
     .map(([key, size]) => ({text: word(key), size}));

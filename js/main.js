@@ -188,8 +188,6 @@ function fontSize(r) {
 
 function textSizeInfo(ctx, d) {
   const res = ctx.measureText(d.text)
-  console.log(d.text)
-  console.log(res.width)
   return res
 }
 
@@ -197,6 +195,22 @@ function elRadius(ctx, d) {
   ctx.font = `bold ${fontSize(d.r)}px sans-serif`
   const s = textSizeInfo(ctx, d)
   return s.width/2
+}
+
+function addWord(word) {
+
+}
+
+function createNode(d) {
+  const node = {
+    r: d.size*10,
+    text: d.text,
+    width: textSizeInfo(ctx, d).width,
+    height: fontSize(d.size*10),
+    x: Math.random()*250,
+    y: Math.random()*20
+  }
+  return node
 }
 
 function main() {
@@ -231,29 +245,23 @@ function main() {
     .slice(0, maxWords)
     .map(([key, size]) => ({text: word(key), size}));
 
-
-  const nodes = data.map(d => (
-    {
+  window.nodes = data.map(d => ({
       r: d.size*10,
       text: d.text,
-      width: textSizeInfo(ctx, d).width*2,
-      height: fontSize(d.size*10)*2,
+      width: textSizeInfo(ctx, d).width,
+      height: fontSize(d.size*10),
       x: Math.random()*250,
       y: Math.random()*20
-      // height: 14
-      // GO HEEEEEEEEERE
-    }
-  ))
+    }))
 
   // do the simulation
 
-  let collisionForce = rectCollide()
-      .size(function(d){return [d.width,d.height]});
-
+  // let collisionForce = rectCollide()
+  //   .size(function(d){ return [d.width,d.height] });
   
-  let boxForce = boundedBox()
-      .bounds([[0, 0], [width, height]])
-      .size(function (d) { return [d.width, d.height] })
+  // let boxForce = boundedBox()
+  //   .bounds([[0, 0], [width, height]])
+  //   .size(function (d) { return [d.width, d.height] })
 
   const simulation = d3.forceSimulation()
     .velocityDecay(0.2)

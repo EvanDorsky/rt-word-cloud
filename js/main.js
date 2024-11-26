@@ -186,25 +186,25 @@ function fontSize(r) {
   return r*2
 }
 
-function textSizeInfo(ctx, d) {
+function textSizeInfo(d) {
   const res = ctx.measureText(d.text)
   return res
 }
 
-function elRadius(ctx, d) {
+function elRadius(d) {
   ctx.font = `bold ${fontSize(d.r)}px sans-serif`
-  const s = textSizeInfo(ctx, d)
+  const s = textSizeInfo(d)
   return s.width/2
 }
 
-function addWord(ctx, word) {
+function addWord(word) {
   // find the node (if it exists)
   const node = window.nodes.find(d => d.text === "word")
   // if it doesn't exist, create it with size 1
   if (node) {
     node.size += 1
   } else {
-    node = createNode(ctx, {
+    node = createNode({
       size: 1,
       text: word
     })
@@ -212,11 +212,11 @@ function addWord(ctx, word) {
   }
 }
 
-function createNode(ctx, d) {
+function createNode(d) {
   const node = {
     r: d.size*10,
     text: d.text,
-    width: textSizeInfo(ctx, d).width,
+    width: textSizeInfo(d).width,
     height: fontSize(d.size*10),
     x: Math.random()*250,
     y: Math.random()*20
@@ -229,7 +229,7 @@ function main() {
   const height = width
 
   const canvas = document.getElementById("main")
-  const ctx = canvas.getContext('2d')
+  window.ctx = canvas.getContext('2d')
   ctx.textAlign = "center"
   ctx.textBaseline = "middle"
 
@@ -256,7 +256,7 @@ function main() {
     .slice(0, maxWords)
     .map(([key, size]) => ({text: word(key), size}));
 
-  window.nodes = data.map(d => createNode(ctx, d))
+  window.nodes = data.map(d => createNode(d))
 
   // do the simulation
 
@@ -271,7 +271,7 @@ function main() {
     .velocityDecay(0.2)
     .force("x", d3.forceX().strength(0.02))
     .force("y", d3.forceY().strength(0.02))
-    .force("collide", d3.forceCollide().radius(d => elRadius(ctx, d)).iterations(2))
+    .force("collide", d3.forceCollide().radius(d => elRadius(d)).iterations(2))
     // https://observablehq.com/@lvngd/rectangular-collision-detection
     // .force('box', boxForce)
     // .force('collision', collisionForce)

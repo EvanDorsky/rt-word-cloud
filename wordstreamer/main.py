@@ -15,6 +15,7 @@ import threading
 filename = "test.log"
 
 def clean_token(token):
+  # print("input token: %s" % token)
   token_l = token.lower().strip()
 
   # disqualify certain tokens
@@ -25,7 +26,8 @@ def clean_token(token):
   return re.sub(r'[^a-zA-Z]', '', token_l)
 
 def process(s):
-  tokens = list(map(clean_token, s.split(' ')))
+  cleaned = re.sub(r'\[.*?\]', '', s)
+  tokens = list(map(clean_token, cleaned.split(' ')))
 
   tokens_clean = [t for t in tokens if t]
   return tokens_clean
@@ -43,7 +45,7 @@ async def echo(websocket):
       for word in words:
         await websocket.send(word)
       # await websocket.send(newstuff)
-      time.sleep(1)
+      time.sleep(.2)
 
       laststuff = stuff
 

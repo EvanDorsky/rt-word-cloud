@@ -1,6 +1,8 @@
 (
   function() {
     const socket = new WebSocket('ws://localhost:8765')
+    console.log('socket')
+    console.log(socket)
 
     // Event handler for successful connection
     socket.onopen = function(event) {
@@ -11,6 +13,7 @@
     // Event handler for incoming messages
     socket.onmessage = function(event) {
       console.log('Message from server:', event.data);
+      addWord(event.data)
     };
 
     // Event handler for errors

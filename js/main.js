@@ -311,7 +311,6 @@ function main() {
   // invalidation.then(() => simulation.stop())
 
   function ticked() {
-    console.log('tick')
     ctx.clearRect(0, 0, width, height)
     ctx.save()
     ctx.translate(width / 2, height / 2)
